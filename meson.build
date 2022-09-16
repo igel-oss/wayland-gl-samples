@@ -63,6 +63,11 @@ samples = [
 		'sources': [base_sources, 'tex-cube.c'],
 		'dep': [base_dep, dep_cairo]
 	},
+	{
+		'name': 'gl-fbo',
+		'sources': [base_sources, 'fbo.c'],
+		'dep': [base_dep, dep_cairo]
+	},
 ]
 
 foreach s: samples
