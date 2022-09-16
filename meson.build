@@ -68,6 +68,21 @@ samples = [
 		'sources': [base_sources, 'fbo.c'],
 		'dep': [base_dep, dep_cairo]
 	},
+	{
+		'name': 'gl-instanced-rendering1',
+		'sources': [base_sources, 'instanced_rendering1.c'],
+		'dep': [base_dep, dep_cairo]
+	},
+	{
+		'name': 'gl-instanced-rendering2',
+		'sources': [base_sources, 'instanced_rendering2.c'],
+		'dep': [base_dep, dep_cairo]
+	},
+	{
+		'name': 'gl-instanced-rendering3',
+		'sources': [base_sources, 'instanced_rendering3.c'],
+		'dep': [base_dep, dep_cairo]
+	},
 ]
 
 foreach s: samples
