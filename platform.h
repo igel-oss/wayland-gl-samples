@@ -1,4 +1,5 @@
 /*
+ * Copyright © 2022 IGEL Co., Ltd.
  * Copyright © 2015 Collabora, Ltd.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -21,30 +22,25 @@
  * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
+ * Authors:
+ *    Tomohito Esaki <etom@igel.co.jp>
+ *
+ * Based on platform.h in weston 10.0.92
  */
 
-#ifndef WESTON_PLATFORM_H
-#define WESTON_PLATFORM_H
+#ifndef PLATFORM_H
+#define PLATFORM_H
 
 #include <stdbool.h>
 #include <string.h>
 
-#ifdef ENABLE_EGL
 #include <wayland-egl.h>
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 
-#include "weston-egl-ext.h"
-#endif
-
-#ifdef  __cplusplus
-extern "C" {
-#endif
-
-#ifdef ENABLE_EGL
-
 static bool
-weston_check_egl_extension(const char *extensions, const char *extension)
+check_egl_extension(const char *extensions, const char *extension)
 {
 	size_t extlen = strlen(extension);
 	const char *end = extensions + strlen(extensions);
@@ -72,13 +68,13 @@ weston_check_egl_extension(const char *extensions, const char *extension)
 }
 
 static inline void *
-weston_platform_get_egl_proc_address(const char *address)
+platform_get_egl_proc_address(const char *address)
 {
 	const char *extensions = eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS);
 
 	if (extensions &&
-	    (weston_check_egl_extension(extensions, "EGL_EXT_platform_wayland") ||
-	     weston_check_egl_extension(extensions, "EGL_KHR_platform_wayland"))) {
+	    (check_egl_extension(extensions, "EGL_EXT_platform_wayland") ||
+	     check_egl_extension(extensions, "EGL_KHR_platform_wayland"))) {
 		return (void *) eglGetProcAddress(address);
 	}
 
@@ -86,14 +82,14 @@ weston_platform_get_egl_proc_address(const char *address)
 }
 
 static inline EGLDisplay
-weston_platform_get_egl_display(EGLenum platform, void *native_display,
+platform_get_egl_display(EGLenum platform, void *native_display,
 				const EGLint *attrib_list)
 {
 	static PFNEGLGETPLATFORMDISPLAYEXTPROC get_platform_display = NULL;
 
 	if (!get_platform_display) {
 		get_platform_display = (PFNEGLGETPLATFORMDISPLAYEXTPROC)
-			weston_platform_get_egl_proc_address(
+			platform_get_egl_proc_address(
 				"eglGetPlatformDisplayEXT");
 	}
 
@@ -105,7 +101,7 @@ weston_platform_get_egl_display(EGLenum platform, void *native_display,
 }
 
 static inline EGLSurface
-weston_platform_create_egl_surface(EGLDisplay dpy, EGLConfig config,
+platform_create_egl_surface(EGLDisplay dpy, EGLConfig config,
 				   void *native_window,
 				   const EGLint *attrib_list)
 {
@@ -114,7 +110,7 @@ weston_platform_create_egl_surface(EGLDisplay dpy, EGLConfig config,
 
 	if (!create_platform_window) {
 		create_platform_window = (PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC)
-			weston_platform_get_egl_proc_address(
+			platform_get_egl_proc_address(
 				"eglCreatePlatformWindowSurfaceEXT");
 	}
 
@@ -129,39 +125,10 @@ weston_platform_create_egl_surface(EGLDisplay dpy, EGLConfig config,
 }
 
 static inline EGLBoolean
-weston_platform_destroy_egl_surface(EGLDisplay display,
+platform_destroy_egl_surface(EGLDisplay display,
 				    EGLSurface surface)
 {
 	return eglDestroySurface(display, surface);
 }
-
-#else /* ENABLE_EGL */
-
-static inline void *
-weston_platform_get_egl_display(int platform, void *native_display,
-				const int *attrib_list)
-{
-	return NULL;
-}
-
-static inline void *
-weston_platform_create_egl_surface(void *dpy, void *config,
-				   void *native_window,
-				   const int *attrib_list)
-{
-	return NULL;
-}
-
-static inline unsigned int
-weston_platform_destroy_egl_surface(void *display,
-				    void *surface)
-{
-	return 1;
-}
-#endif /* ENABLE_EGL */
-
-#ifdef  __cplusplus
-}
-#endif
 
 #endif /* WESTON_PLATFORM_H */
