@@ -92,6 +92,10 @@ shader_build_program(struct shader_info *shader)
 		glAttachShader(program, vshader);
 	if (fshader)
 		glAttachShader(program, fshader);
+	if (shader->feedback.vars)
+		glTransformFeedbackVaryings(program, shader->feedback.num,
+					    (const char**)shader->feedback.vars,
+					    shader->feedback.mode);
 	glLinkProgram(program);
 
 	glGetProgramiv(program, GL_LINK_STATUS, &status);

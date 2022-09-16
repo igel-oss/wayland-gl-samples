@@ -83,6 +83,16 @@ samples = [
 		'sources': [base_sources, 'instanced_rendering3.c'],
 		'dep': [base_dep, dep_cairo]
 	},
+	{
+		'name': 'gl-transform-feedback1',
+		'sources': [base_sources, 'transform_feedback1.c'],
+		'dep': [base_dep, dep_cairo]
+	},
+	{
+		'name': 'gl-transform-feedback2',
+		'sources': [base_sources, 'transform_feedback2.c'],
+		'dep': [base_dep, dep_cairo]
+	},
 ]
 
 foreach s: samples

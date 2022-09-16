@@ -30,6 +30,11 @@
 struct shader_info {
 	const char *vertex;
 	const char *fragment;
+	struct {
+		const char **vars;
+		int num;
+		GLenum mode;
+	} feedback;
 };
 
 unsigned int shader_build_program(struct shader_info *shader);
