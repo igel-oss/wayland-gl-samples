@@ -30,6 +30,7 @@
 struct shader_info {
 	const char *vertex;
 	const char *fragment;
+	const char *compute;
 	struct {
 		const char **vars;
 		int num;

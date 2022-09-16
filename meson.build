@@ -93,12 +93,36 @@ samples = [
 		'sources': [base_sources, 'transform_feedback2.c'],
 		'dep': [base_dep, dep_cairo]
 	},
+	{
+		'name': 'gl-compute1',
+		'sources': [base_sources, 'compute1.c'],
+		'dep': [base_dep]
+	},
+	{
+		'name': 'gl-compute2',
+		'sources': [base_sources, 'compute2.c'],
+		'dep': [base_dep],
+	},
+	{
+		'name': 'gl-compute3',
+		'sources': [base_sources, 'compute3.c'],
+		'dep': [base_dep, dep_cairo],
+	},
 ]
 
 foreach s: samples
-	executable(
-		s.get('name'),
-		s.get('sources'),
-		dependencies: s.get('dep')
-	)
+	if get_option('debug-log') == true
+		executable(
+			s.get('name'),
+			s.get('sources'),
+			c_args: '-DDEBUG',
+			dependencies: s.get('dep')
+		)
+	else
+		executable(
+			s.get('name'),
+			s.get('sources'),
+			dependencies: s.get('dep')
+		)
+	endif
 endforeach

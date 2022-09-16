@@ -64,6 +64,9 @@ compile_shader(const char *src, GLenum type)
 		case GL_FRAGMENT_SHADER:
 			type_str = "fragment";
 			break;
+		case GL_COMPUTE_SHADER:
+			type_str = "compute";
+			break;
 		default:
 			type_str = "";
 		}
@@ -79,12 +82,13 @@ compile_shader(const char *src, GLenum type)
 unsigned int
 shader_build_program(struct shader_info *shader)
 {
-	GLuint vshader = 0, fshader = 0, program = 0;
+	GLuint vshader = 0, fshader = 0, cshader = 0, program = 0;
 	GLint status;
 
 	vshader = compile_shader(shader->vertex, GL_VERTEX_SHADER);
 	fshader = compile_shader(shader->fragment, GL_FRAGMENT_SHADER);
-	if (!fshader && !fshader)
+	cshader = compile_shader(shader->compute, GL_COMPUTE_SHADER);
+	if (!fshader && !fshader && !cshader)
 		goto exit;
 
 	program = glCreateProgram();
@@ -92,6 +96,8 @@ shader_build_program(struct shader_info *shader)
 		glAttachShader(program, vshader);
 	if (fshader)
 		glAttachShader(program, fshader);
+	if (cshader)
+		glAttachShader(program, cshader);
 	if (shader->feedback.vars)
 		glTransformFeedbackVaryings(program, shader->feedback.num,
 					    (const char**)shader->feedback.vars,
@@ -113,6 +119,8 @@ exit:
 		glDeleteShader(vshader);
 	if (fshader)
 		glDeleteShader(fshader);
+	if (cshader)
+		glDeleteShader(cshader);
 
 	return program;
 }

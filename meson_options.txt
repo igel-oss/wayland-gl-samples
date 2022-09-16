@@ -1,0 +1,6 @@
+option(
+	'debug-log',
+	type: 'boolean',
+	value: false,
+	description: 'gl-compute2 outputs debug log'
+)
