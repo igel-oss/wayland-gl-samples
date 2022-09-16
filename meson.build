@@ -29,24 +29,46 @@ dep_gl = dependency('glesv2')
 dep_wayland_egl = dependency('wayland-egl')
 dep_wayland = dependency('wayland-client')
 dep_wayland_cursor = dependency('wayland-cursor')
+dep_cairo = dependency('cairo')
 
-sources = [
+base_sources = [
 	xdg_shell_client_protocol_h,
 	xdg_shell_protocol_c,
 	'shader.c',
 	'common.c',
-	'cube.c',
 ]
 
-executable(
-	'gl-cube',
-	sources,
-	dependencies: [
-		dep_wayland,
-		dep_wayland_cursor,
-		dep_wayland_egl,
-		dep_egl,
-		dep_gl,
-		dep_m,
-	],
-)
+base_dep = [
+	dep_wayland,
+	dep_wayland_cursor,
+	dep_wayland_egl,
+	dep_egl,
+	dep_gl,
+	dep_m,
+]
+
+samples = [
+	{
+		'name': 'gl-cube',
+		'sources': [base_sources, 'cube.c'],
+		'dep': base_dep
+	},
+	{
+		'name': 'gl-bullet',
+		'sources': [base_sources, 'bullet.c'],
+		'dep': [base_dep, dep_cairo]
+	},
+	{
+		'name': 'gl-tex-cube',
+		'sources': [base_sources, 'tex-cube.c'],
+		'dep': [base_dep, dep_cairo]
+	},
+]
+
+foreach s: samples
+	executable(
+		s.get('name'),
+		s.get('sources'),
+		dependencies: s.get('dep')
+	)
+endforeach
