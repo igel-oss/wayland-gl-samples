@@ -30,6 +30,8 @@ dep_wayland_egl = dependency('wayland-egl')
 dep_wayland = dependency('wayland-client')
 dep_wayland_cursor = dependency('wayland-cursor')
 dep_cairo = dependency('cairo')
+pvrscope_path = '@0@/pvrscope'.format(meson.current_source_dir())
+dep_pvrscope = cc.find_library('PVRScopeDeveloper', dirs: pvrscope_path)
 
 base_sources = [
 	xdg_shell_client_protocol_h,
@@ -56,7 +58,7 @@ samples = [
 	{
 		'name': 'gl-bullet',
 		'sources': [base_sources, 'bullet.c'],
-		'dep': [base_dep, dep_cairo]
+		'dep': [base_dep, dep_cairo, dep_pvrscope]
 	},
 	{
 		'name': 'gl-tex-cube',

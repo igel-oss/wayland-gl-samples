@@ -4,14 +4,7 @@ These programs are OpenGL samples for Wayland.
 
 ## Build
 
-### for x86 (PC)
-
-```
-$ meson build
-$ ninja -C build/
-```
-
-### cross build using poky SDK
+Use poky SDK for build.
 
 Assume that the poky SDK is installed in /opt/poky/VERSION/.
 
@@ -33,3 +26,7 @@ $ cp -arp images /path/to/work/
 $ cd /path/to/work
 $ ./gl-bullet
 ```
+
+## License
+
+All files in pvrscope folder are distributed in accordance with the [PowerVR Tools Software End User Licence Agreement](https://developer.imaginationtech.com/terms/powervr-tools-software-eula/). All other files are distributed under the MIT License.

@@ -33,6 +33,8 @@
 
 #include <GLES2/gl2.h>
 
+#include "pvrscope/PVRScopeComms.h"
+
 #include "common.h"
 #include "shader.h"
 
@@ -138,6 +140,8 @@ static const char *frag_shader_text = TO_STRING(
 	void main() {
 		gl_FragColor = texture2D(texture, texcoordVarying).bgra;
 	});
+
+static struct SSPSCommsData *PVRScopeComms;
 
 static GLuint
 create_texture()
@@ -441,6 +445,11 @@ redraw(void *data, struct rect *damage)
 	int i;
 	int n_bullets = 0;
 
+	static int frame = 0;
+	char funcName[] = "redraw";
+	pplSendProcessingBegin(PVRScopeComms, funcName, strlen(funcName),
+			       frame);
+
 	enemy_main(&app->enemy, WINDOW_WIDTH, WINDOW_HEIGHT);
 	app->buf.vertex_count = app->buf.p_vertex_buffer
 		= app->buf.p_texcoord_buffer = 0;
@@ -595,6 +604,9 @@ redraw(void *data, struct rect *damage)
 	glVertexAttribPointer(gl->sh_position, 3, GL_SHORT, GL_FALSE, 0,
 			      app->buf.vertex_buffer);
 	glDrawArrays(GL_TRIANGLES, 0, app->buf.vertex_count);
+
+	pplSendProcessingEnd(PVRScopeComms);
+	frame++;
 }
 
 int
@@ -617,7 +629,12 @@ main(int argc, char **argv)
 	player_init(&app.player, WINDOW_WIDTH, WINDOW_HEIGHT);
 	enemy_init(&app.enemy, WINDOW_WIDTH, WINDOW_HEIGHT);
 
+	char name[] = "gl-bullet";
+	PVRScopeComms = pplInitialise(name, strlen(name));
+
 	app_main(argc, argv, &info);
+
+	pplShutdown(PVRScopeComms);
 
 	enemy_deinit(&app.enemy);
 
